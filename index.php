@@ -1,105 +1,100 @@
 <?php include("db.php") ?>
 
-<?php include("includes/header.php") ?>
 
 
-<div class="container p-4 ">
+<?php include("includes/header.php"); ?>
+
+<div class="jumbotron">
+
     <div class="row">
-        <div class="col-md-4">
 
-            <?php if (isset($_SESSION['message'])) { ?>
-                <div class="alert alert-<?=$_SESSION['message_type']; ?> salert-dismissible fade show" role="alert">
-                    <?= $_SESSION['message']  ?>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+         <div class="col-md-7"></div>
 
+                  <table class="table table-striped table-sm">
+ 
+                         <thead>
+                <tr class="btn-dark">
 
-                <?php session_unset();
-            } ?>
-            <div class="card card-body">
-                <form action="save_task.php" method="POST">
-                    <div class="form-group">
+                    <td>Nombre</td>
+                    <td>Fecha de compra</td>
+                    <td>Valor</td>
+                    <td>Vida Util(Años)</td>
+                    <td>Coeficiente %</td>
+                    <td>fecha de inicio</td>
+                    <td>Comentario</td>
+                    <td>Ubicacion</td>
+                  
 
-                        <input type="text" name="titulo" id="titulo" placeholder="Titulo" class="form-control" autofocus>
+                    <td></td>
 
-                    </div>
-                    <div class="form-group">
-                        <textarea type="text" rows="2" name="descripcion" id="descripcion" placeholder="Descripcion" class="form-control"></textarea>
-
-                    </div>
-
-                    <input type="submit" value="Enviar" name="save_task" class="btn btn-success btn-block">
-
-
-                </form>
-            </div>
-
-
-
-        </div>
-
-        <div class="col-md-8">
-
-            <table class="table table-striped table-bordered table-sm">
-                <thead class="btn-success">
-                <tr>
-                    <td>Titulo</td>
-                    <td>Descripcion</td>
-                    <td>Creacion</td>
-                    <td>Opciones</td>
                 </tr>
 
-                </thead>
+            </thead>
+            <tbody>
+                <?php
+      
+                $query = "SELECT id, buy_date,itemtype,value,sink_time,sink_coeff,use_date,comment from glpi_infocoms where itemtype='computer' or (itemtype='Monitor') ";
+                $resut = mysqli_query($conn, $query);
+
+                while ($row = mysqli_fetch_assoc($resut)) { ?>
+
+                    <tr>
+
+                        <td><?php echo $row['itemtype']; ?></td>
+                        <td><?php echo $row['buy_date']; ?></td>
+                        <td><?php echo $row['value']; ?></td>
+                        <td><?php echo $row['sink_time']; ?></td>
+                        <td><?php echo $row['sink_coeff']; ?></td>
+                        <td><?php echo $row['use_date']; ?></td>
+                        <td><?php echo $row['comment']; ?></td>
+
+                    </tr>
+
+                <?php } ?>
+
               
-                <tbody>
-                <?php    
-                  $query = "SELECT * FROM clientes";
-                  $informacion = mysqli_query($conn,$query);
+             
 
-                  while($row = mysqli_fetch_array($informacion)) { ?>
-                           <tr>
-                                 <td><?php echo $row['titulo'] ?></td>
-                                 <td><?php echo $row['descripcion'] ?></td>
-                                 <td><?php echo $row['creacion'] ?></td>
-                               <td>
-                                 <a  href="edit.php?id=<?php echo $row['id'] ?>"> 
-                                  
-                                 <i class="fas fa-marker btn btn-danger"></i>
-
-                                </a>
-
-                                 <a  href="delete.php?id=<?php echo $row['id'] ?>"> 
-                                  
-                                 <i class="far fa-trash-alt btn btn-dark"></i>
-
-                                </a>
-                               </td>
-                           </tr>
-
-                 
-                  <?php }  ?>
-
-
-                </tbody>
-
-            </table>
+            </tbody>
+        </table>
 
 
 
+    </div>
 
+    <div class="col-md-5">
 
-        </div>
+        <table class="table-sm table-striped table-bordered">
+            <?php
+            $query = "SELECT SUM(value) as total, itemtype  FROM glpi_infocoms WHERE itemtype='computer' GROUP BY(itemtype);";
+            $suma_eq = mysqli_query($conn, $query);
+            while ($sm = mysqli_fetch_assoc($suma_eq)) { ?>
 
+                <tr>
+                    <td><?php echo $sm['itemtype']; ?></td>
+                    <td><?php echo $sm['total']; ?></td>
 
+                </tr>
+
+            <?php }  ?>
+            <?php
+            $query = "SELECT SUM(value) as total, itemtype  FROM glpi_infocoms WHERE itemtype='monitor' GROUP BY(itemtype);";
+            $suma_m = mysqli_query($conn, $query);
+            while ($sm = mysqli_fetch_assoc($suma_m)) { ?>
+                <tr>
+                    <td><?php echo $sm['itemtype']; ?></td>
+                    <td><?php echo $sm['total']; ?></td>
+                </tr>
+
+            <?php }  ?>
+        </table>
 
 
     </div>
 
 
 
-
 </div>
 
-<?php include("includes/footer.php") ?>
+
+<?php include("includes/footer.php"); ?>
